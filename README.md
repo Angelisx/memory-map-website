@@ -9,6 +9,7 @@ Built for Angel Smythe (Multica SORA-14) as a personal, evolving map of his Broo
 - 🗺️ Real interactive map centered on Brooklyn, using [Leaflet](https://leafletjs.com/) + free [OpenStreetMap](https://www.openstreetmap.org/) tiles (no API key required, no billing risk)
 - 📍 Click "Add memory" then click any spot on the map to drop a pin
 - ✏️ Each pin has a title, a "when" (year/date), and a short story
+- 🧭 Each pin popup has a "Street View" toggle that embeds Google Street View at that exact spot, plus an "Open in Google Street View" link that opens full Street View in a new tab
 - 💾 Pins are saved to the browser's `localStorage` — they persist across reloads on the same device/browser
 - ⬇️ "Export JSON" button to back up all pins as a JSON file at any time
 - 🗑️ Delete a pin from its popup
@@ -30,6 +31,22 @@ This is a single-user personal memory journal. localStorage means zero backend, 
 npm install
 npm run dev
 ```
+
+## Street View (optional)
+
+The "Open in Google Street View ↗" link in every pin popup works with no setup — it opens Google Maps Street View in a new tab at the pin's exact coordinates.
+
+For the embedded in-page Street View panel (toggled via the "🧭 Street View" button), you need a Google Maps **Embed API** key:
+
+1. Create/select a project in the [Google Cloud Console](https://console.cloud.google.com/), enable the **Maps Embed API**, and create an API key.
+2. Restrict the key to the Maps Embed API and to your site's domain (and `localhost` for dev).
+3. Create a `.env` file (not committed) with:
+   ```
+   VITE_GOOGLE_MAPS_EMBED_KEY=your_key_here
+   ```
+4. On Netlify, add `VITE_GOOGLE_MAPS_EMBED_KEY` under Site settings → Environment variables, then redeploy.
+
+Without the key set, the embedded panel button is hidden and only the "Open in Google Street View" link is shown — the app still works fully.
 
 ## Build
 

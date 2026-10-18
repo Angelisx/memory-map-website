@@ -29,6 +29,46 @@ function savePins(pins) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(pins))
 }
 
+const GOOGLE_MAPS_EMBED_KEY = import.meta.env.VITE_GOOGLE_MAPS_EMBED_KEY
+
+function StreetView({ lat, lng }) {
+  const [open, setOpen] = useState(false)
+  const streetViewUrl = `https://www.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=0,0,0,0,0`
+
+  return (
+    <div className="street-view">
+      <div className="street-view-actions">
+        {GOOGLE_MAPS_EMBED_KEY && (
+          <button
+            type="button"
+            className="btn-secondary btn-streetview"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? 'Hide Street View' : '🧭 Street View'}
+          </button>
+        )}
+        <a
+          className="street-view-link"
+          href={streetViewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open in Google Street View ↗
+        </a>
+      </div>
+      {GOOGLE_MAPS_EMBED_KEY && open && (
+        <iframe
+          className="street-view-frame"
+          title="Street View"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`https://www.google.com/maps/embed/v1/streetview?key=${GOOGLE_MAPS_EMBED_KEY}&location=${lat},${lng}&heading=0&pitch=0&fov=80`}
+        />
+      )}
+    </div>
+  )
+}
+
 function ClickCatcher({ onMapClick }) {
   useMapEvents({
     click(e) {
@@ -178,11 +218,12 @@ export default function App() {
 
         {pins.map((pin) => (
           <Marker key={pin.id} position={[pin.lat, pin.lng]}>
-            <Popup>
+            <Popup minWidth={260} maxWidth={320}>
               <div className="popup-content">
                 <h3>{pin.title}</h3>
                 {pin.when && <div className="popup-when">{pin.when}</div>}
                 {pin.memory && <p>{pin.memory}</p>}
+                <StreetView lat={pin.lat} lng={pin.lng} />
                 <button className="btn-delete" onClick={() => handleDelete(pin.id)}>
                   Delete
                 </button>
